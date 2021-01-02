@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // Providers
+import '../providers/products.dart';
 import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
@@ -44,7 +45,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid) return;
     _form.currentState.save();
+    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -69,6 +74,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Title'),
                   textInputAction: TextInputAction.next,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please provide a title';
+                    }
+                    return null;
+                  },
                   onSaved: (value) {
                     _editedProduct = Product(
                       title: value,
@@ -83,6 +94,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   decoration: InputDecoration(labelText: 'Price'),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter a price';
+                    } else if (double.tryParse(value) == null) {
+                      return 'Please enter a valid number';
+                    } else if (double.parse(value) <= 0) {
+                      return 'Please enter a price greater than 0';
+                    }
+                    return null;
+                  },
                   onSaved: (value) {
                     _editedProduct = Product(
                       title: _editedProduct.title,
@@ -97,6 +118,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   decoration: InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter a description';
+                    } else if (value.length < 10) {
+                      return 'Please enter a longer description';
+                    }
+                    return null;
+                  },
                   onSaved: (value) {
                     _editedProduct = Product(
                       title: _editedProduct.title,
@@ -136,6 +165,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         textInputAction: TextInputAction.done,
                         controller: _imageUrlController,
                         focusNode: _imageUrlFocusNode,
+                        validator: (value) {
+                          var urlPattern = r"(https?:\/\/.*\.(?:png|jpg|jpeg))";
+                          var result =
+                              new RegExp(urlPattern, caseSensitive: false)
+                                  .hasMatch(value);
+                          if (value.isEmpty) {
+                            return 'Please enter an image URL';
+                          } else if (!result) {
+                            return 'Please enter a valid image URL';
+                          }
+                          return null;
+                        },
                         onEditingComplete: () {
                           setState(() {});
                         },
