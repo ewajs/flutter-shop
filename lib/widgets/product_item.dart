@@ -1,9 +1,14 @@
+// Framework & Standard Libraries
 import 'package:flutter/material.dart';
+
+// 3rd Party Packages
 import 'package:provider/provider.dart';
 
+// Providers
 import '../providers/product.dart';
 import '../providers/cart.dart';
 
+// Screens
 import '../screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {

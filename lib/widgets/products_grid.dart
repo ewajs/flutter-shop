@@ -1,8 +1,13 @@
+// Framework & Standard Libraries
 import 'package:flutter/material.dart';
+
+// 3rd Party Packages
 import 'package:provider/provider.dart';
 
+// Providers
 import '../providers/products.dart';
 
+// Widgets
 import '../widgets/product_item.dart';
 
 class ProductsGrid extends StatelessWidget {

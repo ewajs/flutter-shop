@@ -1,5 +1,7 @@
+// Framework & Standard Libraries
 import 'package:flutter/material.dart';
 
+// Providers
 import './product.dart';
 
 class Products with ChangeNotifier {

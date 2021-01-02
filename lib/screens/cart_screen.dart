@@ -1,4 +1,4 @@
-// 3rd Party Packages
+// Framework & Standard Libraries
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

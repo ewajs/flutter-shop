@@ -1,7 +1,8 @@
+// Framework & Standard Libraries
 import 'package:flutter/material.dart';
-
 import 'package:flutter/foundation.dart';
 
+// Providers
 import './cart.dart';
 
 class OrderItem {
