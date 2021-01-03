@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 // 3rd Party Packages
 import 'package:http/http.dart' as http;
 
+// Models
+import '../models/http_exception.dart';
+
 // Providers
 import './product.dart';
 
@@ -78,16 +81,39 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
+    final url =
+        'https://flutter-shop-b6801-default-rtdb.firebaseio.com/products/$id.json';
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url =
+        'https://flutter-shop-b6801-default-rtdb.firebaseio.com/products/$id.json';
+    // Optimistic Update (ie. delete without waiting and re-add if failure)
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+    final response = await http.delete(url);
+    // Since error on delete (405) won't be considered as an error by http
+    // we need to throw our own exception here if the status code is 405.
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Error deleting product');
+    }
+    existingProduct = null;
   }
 }
