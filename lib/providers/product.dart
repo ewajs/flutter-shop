@@ -1,5 +1,9 @@
 // Framework & Standard Libraries
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+
+// 3rd Party Packages
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -18,8 +22,26 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
-    isFavorite = !isFavorite;
+  void _setFavorite(bool value) {
+    isFavorite = value;
     notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
+    _setFavorite(!isFavorite);
+    final url =
+        'https://flutter-shop-b6801-default-rtdb.firebaseio.com/products/$id.json';
+    try {
+      final response = await http.patch(url,
+          body: json.encode({
+            'isFavorite': isFavorite,
+          }));
+      if (response.statusCode >= 400) {
+        _setFavorite(oldStatus);
+      }
+    } catch (error) {
+      _setFavorite(oldStatus);
+    }
   }
 }
