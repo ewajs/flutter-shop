@@ -7,9 +7,6 @@ import 'package:provider/provider.dart';
 // Providers
 import '../providers/auth.dart';
 
-// Helpers
-import '../helpers/custom_route.dart';
-
 // Screens
 import '../screens/user_products_screen.dart';
 import '../screens/orders_screen.dart';
@@ -34,11 +31,8 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.credit_card),
             title: Text('Orders'),
-            onTap: () => Navigator.of(context).pushReplacement(
-              CustomRoute(
-                builder: (ctx) => OrdersScreen(),
-              ),
-            ),
+            onTap: () => Navigator.of(context)
+                .pushReplacementNamed(OrdersScreen.routeName),
           ),
           Divider(),
           ListTile(
